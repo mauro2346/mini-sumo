@@ -1,0 +1,120 @@
+//motores L293D
+
+#define IN1 6
+#define IN2 8
+#define IN3 9
+#define IN4 12
+
+#define TRIG 16
+#define ECHO 15
+
+#define OUT 14
+
+#define PUSH 5
+
+
+// ADELANTE
+void Adelante()
+{
+  digitalWrite(IN1,HIGH);
+  digitalWrite(IN2,LOW);
+  digitalWrite(IN3,HIGH);
+  digitalWrite(IN4,LOW);
+}
+
+// IZQUIERDA
+void Derecha()
+{
+  digitalWrite(IN1,HIGH);
+  digitalWrite(IN2,LOW);
+  digitalWrite(IN3,LOW);
+  digitalWrite(IN4,HIGH);
+}
+
+void izquierda()
+{
+  digitalWrite(IN1,LOW);
+  digitalWrite(IN2,HIGH);
+  digitalWrite(IN3,HIGH);
+  digitalWrite(IN4,LOW);
+}
+
+void Atras()
+{
+  digitalWrite(IN1,LOW);
+  digitalWrite(IN2,HIGH);
+  digitalWrite(IN3,LOW);
+  digitalWrite(IN4,HIGH);
+}
+
+//SENSORES
+
+int DISTANCIA(){
+  digitalWrite(TRIG,LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIG,HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG,LOW);
+
+   // Leer tiempo de regreso
+  int DURACION = pulseIn(ECHO,HIGH);
+
+  int DISTANCIA = (DURACION * 0.0343)/2;
+  
+  return DISTANCIA;
+}
+
+void setup(){
+  Serial.begin(9600);
+  pinMode(IN1,OUTPUT);
+  pinMode(IN2,OUTPUT);
+  pinMode(IN3,OUTPUT);
+  pinMode(IN4,OUTPUT);
+  
+  pinMode(TRIG,OUTPUT);
+  pinMode(ECHO,INPUT);
+  pinMode(OUT,INPUT);
+  pinMode(PUSH,INPUT_PULLUP);
+  Serial.begin(9600);
+
+  delay(5000);
+  
+  while (digitalRead(PUSH) == HIGH) {
+  }
+  delay(5000);
+  
+  
+}
+
+void loop(){
+  // LECTURA
+  int sensorDistancia = DISTANCIA();
+  int sensorPiso = digitalRead(OUT);
+ 
+  
+  Serial.print("Sensor piso = ");
+  Serial.println(sensorPiso);
+  
+  
+  Serial.print("Sensor distancia = ");
+  Serial.println(sensorDistancia);
+  
+  
+  if(sensorDistancia > 0 && sensorDistancia < 40){
+    Adelante();
+  }
+  else {
+    DISTANCIA();
+    Derecha();
+  }
+  delay(50);
+  
+  
+  if(sensorPiso == 1){
+    Atras();
+    delay(500);
+  }
+ }
+ 
+
+//PRMETROS
